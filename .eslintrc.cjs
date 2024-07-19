@@ -1,8 +1,9 @@
 module.exports = {
   root: true,
   env: { browser: true, es2020: true },
-  plugins: ['perfectionist', 'unused-imports', 'prettier'],
-  extends: ['airbnb', 'airbnb/hooks', 'prettier'],
+  plugins: ['@typescript-eslint', 'perfectionist', 'unused-imports', 'prettier'],
+  extends: ['plugin:@typescript-eslint/recommended', 'airbnb', 'airbnb/hooks', 'prettier'],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
