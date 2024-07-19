@@ -47,12 +47,12 @@ export default function Home() {
 
   const handleMoodSelect = async (selectedMood: string) => {
     setMood(selectedMood);
-    await fetchItinerary(selectedMood);
+    if (mood) await fetchItinerary();
   };
 
-  const fetchItinerary = async (mood: string) => {
-    if (!location) {
-      setError('Please select a location first');
+  const fetchItinerary = async () => {
+    if (!location || !mood) {
+      setError('Please select both a location and mood');
       return;
     }
 
