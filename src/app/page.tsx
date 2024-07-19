@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Container, Typography, Box, CircularProgress, Alert, Button } from '@mui/material';
-import MoodForm from '@/components/MoodForm';
-import LocationInput from '@/components/LocationInput';
-import Itinerary from '@/components/Itinerary';
+
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { Box, Alert, Button, Container, Typography, CircularProgress } from '@mui/material';
+
+import MoodForm from 'src/components/MoodForm';
+import Itinerary from 'src/components/Itinerary';
+import LocationInput from 'src/components/LocationInput';
 
 interface ItineraryActivity {
   activity: string;
@@ -33,8 +35,8 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [location, setLocation] = useState<string | null>(null);
 
-  const handleLocationSubmit = (location: string) => {
-    setLocation(location);
+  const handleLocationSubmit = (locationData: string) => {
+    setLocation(locationData);
   };
 
   const handleMoodSubmit = async (mood: string) => {

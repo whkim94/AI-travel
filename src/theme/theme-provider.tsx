@@ -1,8 +1,10 @@
 'use client';
 
+import { useState, ReactNode, useEffect } from 'react';
+
+import { CssBaseline, ThemeProvider as MuiThemeProvider } from '@mui/material';
+
 import { createDynamicTheme } from './createDynamicTheme';
-import { ThemeProvider as MuiThemeProvider, CssBaseline } from '@mui/material';
-import { ReactNode, useState, useEffect } from 'react';
 
 interface ThemeProviderProps {
   children: ReactNode;

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, CircularProgress } from '@mui/material';
-import { getRandomLocation } from '@/utils/randomLocation';
+
+import { Box, Button, TextField, Typography, CircularProgress } from '@mui/material';
+
+import { getRandomLocation } from 'src/utils/randomLocation';
 
 interface LocationInputProps {
   onLocationSubmit: (location: string) => void;
@@ -27,7 +29,7 @@ const LocationInput: React.FC<LocationInputProps> = ({ onLocationSubmit }) => {
                 data.address.town ||
                 data.address.village ||
                 data.address.hamlet;
-              const country = data.address.country;
+              const { country } = data.address;
               if (city && country) {
                 const locationString = `${city}, ${country}`;
                 setLocation(locationString);

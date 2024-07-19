@@ -1,4 +1,4 @@
-import { createTheme, Theme } from '@mui/material/styles';
+import { Theme, createTheme } from '@mui/material/styles';
 
 export function createDynamicTheme(colorCode: string): Theme {
   return createTheme({

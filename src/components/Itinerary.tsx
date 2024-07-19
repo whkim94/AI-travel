@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import {
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  Paper,
-  Box,
-  Card,
-  CardMedia,
-  CardContent,
-} from '@mui/material';
 import Image from 'next/image';
+import React, { useState } from 'react';
+
+import {
+  List,
+  Card,
+  Paper,
+  ListItem,
+  CardMedia,
+  Typography,
+  CardContent,
+  ListItemText,
+} from '@mui/material';
 
 interface ItineraryActivity {
   activity: string;

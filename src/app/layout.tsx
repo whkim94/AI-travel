@@ -1,6 +1,8 @@
-import { ThemeProvider } from '@/theme/theme-provider';
-import Header from '@/components/Header';
 import { Box, Link, Typography } from '@mui/material';
+
+import { ThemeProvider } from 'src/theme/theme-provider';
+
+import Header from 'src/components/Header';
 
 export const metadata = {
   title: 'MoodTrek - Your Mood-Based Travel Advisor',

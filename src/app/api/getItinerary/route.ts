@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { generateItineraryPrompt } from '@/utils/itineraryPrompt';
-import { searchImage } from '@/utils/imageSearch';
+
+import { searchImage } from 'src/utils/imageSearch';
+import { generateItineraryPrompt } from 'src/utils/itineraryPrompt';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
 
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
     const response = await result.response;
     const text = response.text();
 
-    let data = JSON.parse(text);
+    const data = JSON.parse(text);
 
     if (!data.colorCode || !Array.isArray(data.activities) || data.activities.length !== 5) {
       throw new Error('Invalid response structure');
