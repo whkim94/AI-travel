@@ -42,6 +42,7 @@ function ActivityDetail({ activity, index }: { activity: ItineraryActivity; inde
           alt={`Activity ${index + 1}`}
           layout="fill"
           objectFit="cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           onError={() => setImgSrc('/placeholder-image.jpg')}
         />
       </CardMedia>
