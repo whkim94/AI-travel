@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-import { searchImage } from 'src/utils/imageSearch';
 import { generateItineraryPrompt } from 'src/utils/itineraryPrompt';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
@@ -27,10 +26,10 @@ export async function POST(request: Request) {
     }
 
     // Fetch images for each activity
-    for (let i = 0; i < data.activities.length; i++) {
-      const imageUrl = await searchImage(data.activities[i].activity, location);
-      data.activities[i].imageUrl = imageUrl;
-    }
+    // for (let i = 0; i < data.activities.length; i++) {
+    //   const imageUrl = await searchImage(data.activities[i].activity, location);
+    //   data.activities[i].imageUrl = imageUrl;
+    // }
 
     return NextResponse.json(data);
   } catch (error) {

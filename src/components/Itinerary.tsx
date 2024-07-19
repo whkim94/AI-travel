@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import React, { useState } from 'react';
 
 import {
@@ -37,14 +36,14 @@ function ActivityDetail({ activity, index }: { activity: ItineraryActivity; inde
   return (
     <Card sx={{ mb: 3 }}>
       <CardMedia component="div" sx={{ position: 'relative', height: 200 }}>
-        <Image
+        {/* <Image
           src={imgSrc}
           alt={`Activity ${index + 1}`}
           layout="fill"
           objectFit="cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           onError={() => setImgSrc('/placeholder-image.jpg')}
-        />
+        /> */}
       </CardMedia>
       <CardContent>
         <Typography variant="h6" gutterBottom>
