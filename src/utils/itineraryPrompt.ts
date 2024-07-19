@@ -8,7 +8,8 @@ Format the response STRICTLY as a valid JSON object with the following structure
   "colorCode": "#RRGGBB",
   "activities": [
     {
-      "activity": "Description of the activity",
+      "title": "A short, catchy title for the activity",
+      "activity": "Detailed description of the activity",
       "location": {
         "name": "Name of the location",
         "address": "Address of the location"
@@ -23,5 +24,5 @@ Format the response STRICTLY as a valid JSON object with the following structure
   ]
 }
 
-IMPORTANT: Ensure that the response is a valid JSON object. Use double quotes for all strings and property names. Do not use single quotes. Do not include any explanation or additional text outside of the JSON object. The colorCode must be a valid hexadecimal color code, and there must be exactly 5 activities in the array.
+IMPORTANT: Ensure that the response is a valid JSON object. Use double quotes for all strings and property names. Do not use single quotes. Do not include any explanation or additional text outside of the JSON object. The colorCode must be a valid hexadecimal color code, and there must be exactly 5 activities in the array. Each activity must have a unique, descriptive title.
 `;

@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 
 interface ItineraryActivity {
+  title: string;
   activity: string;
   location: {
     name: string;
@@ -31,7 +32,7 @@ interface ItineraryProps {
   activities: ItineraryActivity[];
 }
 
-function ActivityDetail({ activity, index }: { activity: ItineraryActivity; index: number }) {
+function ActivityDetail({ activity }: { activity: ItineraryActivity }) {
   const [imgSrc, setImgSrc] = useState(activity.imageUrl);
 
   return (
@@ -39,16 +40,15 @@ function ActivityDetail({ activity, index }: { activity: ItineraryActivity; inde
       <CardMedia component="div" sx={{ position: 'relative', height: 200 }}>
         <Image
           src={imgSrc}
-          alt={`Activity ${index + 1}`}
+          alt={activity.title}
           layout="fill"
           objectFit="cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           onError={() => setImgSrc('/placeholder-image.jpg')}
         />
       </CardMedia>
       <CardContent>
         <Typography variant="h6" gutterBottom>
-          Activity {index + 1}
+          {activity.title}
         </Typography>
         <Typography variant="body1" gutterBottom>
           {activity.activity}
@@ -81,7 +81,7 @@ export default function Itinerary({ activities }: ItineraryProps) {
         Your Personalized Itinerary
       </Typography>
       {activities.map((item, index) => (
-        <ActivityDetail key={index} activity={item} index={index} />
+        <ActivityDetail key={index} activity={item} />
       ))}
     </Paper>
   );
