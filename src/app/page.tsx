@@ -50,7 +50,7 @@ export default function Home() {
     await fetchItinerary(selectedMood);
   };
 
-  const fetchItinerary = async (moodData: string) => {
+  const fetchItinerary = async (mood: string) => {
     if (!location) {
       setError('Please select a location first');
       return;
@@ -62,7 +62,7 @@ export default function Home() {
       const response = await fetch('/api/getItinerary', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ moodData, location }),
+        body: JSON.stringify({ mood, location }),
       });
       if (!response.ok) {
         throw new Error('Failed to fetch itinerary');
