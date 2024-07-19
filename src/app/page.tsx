@@ -10,6 +10,7 @@ import Itinerary from 'src/components/Itinerary';
 import LocationInput from 'src/components/LocationInput';
 
 interface ItineraryActivity {
+  title: string;
   activity: string;
   location: {
     name: string;
