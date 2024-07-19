@@ -1,13 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { CSSTransition } from 'react-transition-group';
 
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Box, Alert, Button, Container, Typography, CircularProgress } from '@mui/material';
 
-import MoodForm from 'src/components/MoodForm';
 import Itinerary from 'src/components/Itinerary';
+import MoodSelector from 'src/components/MoodSelector';
 import LocationInput from 'src/components/LocationInput';
+import ProgressStepper from 'src/components/ProgressStepper';
 
 interface ItineraryActivity {
   title: string;
@@ -31,18 +33,26 @@ interface ItineraryData {
 }
 
 export default function Home() {
+  const [activeStep, setActiveStep] = useState(0);
+  const [location, setLocation] = useState<string | null>(null);
+  const [mood, setMood] = useState<string | null>(null);
   const [itineraryData, setItineraryData] = useState<ItineraryData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [location, setLocation] = useState<string | null>(null);
 
   const handleLocationSubmit = (locationData: string) => {
     setLocation(locationData);
+    setActiveStep(1);
   };
 
-  const handleMoodSubmit = async (mood: string) => {
+  const handleMoodSelect = async (selectedMood: string) => {
+    setMood(selectedMood);
+    await fetchItinerary(selectedMood);
+  };
+
+  const fetchItinerary = async (moodData: string) => {
     if (!location) {
-      setError('Please confirm your location first');
+      setError('Please select a location first');
       return;
     }
 
@@ -52,13 +62,14 @@ export default function Home() {
       const response = await fetch('/api/getItinerary', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mood, location }),
+        body: JSON.stringify({ moodData, location }),
       });
       if (!response.ok) {
         throw new Error('Failed to fetch itinerary');
       }
       const data = await response.json();
       setItineraryData(data);
+      setActiveStep(2);
     } catch (err) {
       console.error('Error fetching itinerary:', err);
       setError('Failed to generate itinerary. Please try again.');
@@ -70,6 +81,8 @@ export default function Home() {
   const handleReset = () => {
     setItineraryData(null);
     setLocation(null);
+    setMood(null);
+    setActiveStep(0);
     setError(null);
     // Reset the color to default
     const event = new CustomEvent('colorChange', { detail: '#1976d2' });
@@ -84,42 +97,65 @@ export default function Home() {
   }, [itineraryData]);
 
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ my: 4 }}>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-          <Typography variant="h4" component="h1">
-            MoodTrek
-          </Typography>
-          {(location || itineraryData) && (
-            <Button variant="outlined" startIcon={<RefreshIcon />} onClick={handleReset}>
-              Reset
-            </Button>
-          )}
-        </Box>
-        <Typography variant="subtitle1" gutterBottom>
-          Your Mood-Based Travel Advisor
-        </Typography>
-        {!location && <LocationInput onLocationSubmit={handleLocationSubmit} />}
-        {location && !itineraryData && (
-          <>
-            <Typography variant="subtitle1" gutterBottom>
-              Current Location: {location}
+    <Box>
+      {/* <HeroSection /> */}
+      <Container maxWidth="md">
+        <Box sx={{ my: 4 }}>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+            <Typography variant="h4" component="h1">
+              MoodTrek
             </Typography>
-            <MoodForm onSubmit={handleMoodSubmit} loading={loading} />
-          </>
-        )}
-        {loading && (
-          <Box display="flex" justifyContent="center" my={2}>
-            <CircularProgress />
+            {(location || itineraryData) && (
+              <Button variant="outlined" startIcon={<RefreshIcon />} onClick={handleReset}>
+                Start Over
+              </Button>
+            )}
           </Box>
-        )}
-        {error && (
-          <Alert severity="error" sx={{ mt: 2 }}>
-            {error}
-          </Alert>
-        )}
-        {itineraryData && <Itinerary activities={itineraryData.activities} />}
-      </Box>
-    </Container>
+
+          <ProgressStepper activeStep={activeStep} />
+
+          <CSSTransition in={activeStep === 0} timeout={300} classNames="fade" unmountOnExit>
+            <LocationInput onLocationSubmit={handleLocationSubmit} />
+          </CSSTransition>
+
+          <CSSTransition in={activeStep === 1} timeout={300} classNames="fade" unmountOnExit>
+            <MoodSelector onMoodSelect={handleMoodSelect} loading={loading} />
+          </CSSTransition>
+
+          {loading && (
+            <Box display="flex" justifyContent="center" my={2}>
+              <CircularProgress />
+            </Box>
+          )}
+
+          {error && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {error}
+            </Alert>
+          )}
+
+          <CSSTransition
+            in={activeStep === 2 && !!itineraryData}
+            timeout={300}
+            classNames="fade"
+            unmountOnExit
+          >
+            <Box>
+              {itineraryData && (
+                <>
+                  <Itinerary activities={itineraryData.activities} />
+                  {/* <Box mt={4}>
+                    <Typography variant="h5" gutterBottom>
+                      Activity Locations
+                    </Typography>
+                    <ActivityMap locations={itineraryData.activities.map((a) => a.location)} />
+                  </Box> */}
+                </>
+              )}
+            </Box>
+          </CSSTransition>
+        </Box>
+      </Container>
+    </Box>
   );
 }
