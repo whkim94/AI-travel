@@ -8,7 +8,7 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
     ecmaFeatures: {
-      jsx: true,
+      tsx: true,
     },
   },
   settings: {
@@ -18,7 +18,7 @@ module.exports = {
     'import/resolver': {
       alias: {
         map: [['src', './src']],
-        extensions: ['.js', '.jsx', '.json'],
+        extensions: ['.ts', '.tsx', '.json'],
       },
     },
   },
