@@ -1,15 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { CSSTransition } from 'react-transition-group';
 
 import RefreshIcon from '@mui/icons-material/Refresh';
+import EditLocationIcon from '@mui/icons-material/EditLocation';
 import { Box, Alert, Button, Container, Typography, CircularProgress } from '@mui/material';
 
 import Itinerary from 'src/components/Itinerary';
 import MoodSelector from 'src/components/MoodSelector';
 import LocationInput from 'src/components/LocationInput';
-import ProgressStepper from 'src/components/ProgressStepper';
 
 interface ItineraryActivity {
   title: string;
@@ -33,26 +32,70 @@ interface ItineraryData {
 }
 
 export default function Home() {
-  const [activeStep, setActiveStep] = useState(0);
   const [location, setLocation] = useState<string | null>(null);
   const [mood, setMood] = useState<string | null>(null);
   const [itineraryData, setItineraryData] = useState<ItineraryData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
 
-  const handleLocationSubmit = (locationData: string) => {
-    setLocation(locationData);
-    setActiveStep(1);
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
+
+  const getCurrentLocation = () => {
+    if ('geolocation' in navigator) {
+      setLoading(true);
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`
+            );
+            const data = await response.json();
+            if (data) {
+              const city =
+                data.address.city ||
+                data.address.town ||
+                data.address.village ||
+                data.address.hamlet;
+              const { country } = data.address;
+              if (city && country) {
+                setLocation(`${city}, ${country}`);
+              }
+            }
+          } catch (error) {
+            console.error('Error fetching location name:', error);
+            setError('Failed to get location. Please enter manually.');
+          } finally {
+            setLoading(false);
+          }
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+          setError('Unable to get your location. Please enter manually.');
+          setLoading(false);
+        }
+      );
+    } else {
+      setError('Geolocation is not supported by your browser. Please enter location manually.');
+      setLoading(false);
+    }
+  };
+
+  const handleLocationSubmit = (newLocation: string) => {
+    setLocation(newLocation);
   };
 
   const handleMoodSelect = async (selectedMood: string) => {
     setMood(selectedMood);
-    if (mood) await fetchItinerary();
+    await fetchItinerary(selectedMood);
   };
 
-  const fetchItinerary = async () => {
-    if (!location || !mood) {
-      setError('Please select both a location and mood');
+  const fetchItinerary = async (selectedMood: string) => {
+    if (!location) {
+      setError('Please set a location first');
       return;
     }
 
@@ -62,14 +105,13 @@ export default function Home() {
       const response = await fetch('/api/getItinerary', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mood, location }),
+        body: JSON.stringify({ mood: selectedMood, location }),
       });
       if (!response.ok) {
         throw new Error('Failed to fetch itinerary');
       }
       const data = await response.json();
       setItineraryData(data);
-      setActiveStep(2);
     } catch (err) {
       console.error('Error fetching itinerary:', err);
       setError('Failed to generate itinerary. Please try again.');
@@ -80,13 +122,9 @@ export default function Home() {
 
   const handleReset = () => {
     setItineraryData(null);
-    setLocation(null);
     setMood(null);
-    setActiveStep(0);
     setError(null);
-    // Reset the color to default
-    const event = new CustomEvent('colorChange', { detail: '#1976d2' });
-    window.dispatchEvent(event);
+    getCurrentLocation();
   };
 
   useEffect(() => {
@@ -105,22 +143,28 @@ export default function Home() {
             <Typography variant="h4" component="h1">
               MoodTrek
             </Typography>
-            {(location || itineraryData) && (
+            <Box>
+              <Button
+                variant="outlined"
+                startIcon={<EditLocationIcon />}
+                onClick={() => setIsLocationModalOpen(true)}
+                sx={{ mr: 1 }}
+              >
+                Change Location
+              </Button>
               <Button variant="outlined" startIcon={<RefreshIcon />} onClick={handleReset}>
                 Start Over
               </Button>
-            )}
+            </Box>
           </Box>
 
-          <ProgressStepper activeStep={activeStep} />
+          {location && (
+            <Typography variant="subtitle1" gutterBottom>
+              Current Location: {location}
+            </Typography>
+          )}
 
-          <CSSTransition in={activeStep === 0} timeout={300} classNames="fade" unmountOnExit>
-            <LocationInput onLocationSubmit={handleLocationSubmit} />
-          </CSSTransition>
-
-          <CSSTransition in={activeStep === 1} timeout={300} classNames="fade" unmountOnExit>
-            <MoodSelector onMoodSelect={handleMoodSelect} loading={loading} />
-          </CSSTransition>
+          {!itineraryData && <MoodSelector onMoodSelect={handleMoodSelect} loading={loading} />}
 
           {loading && (
             <Box display="flex" justifyContent="center" my={2}>
@@ -134,28 +178,26 @@ export default function Home() {
             </Alert>
           )}
 
-          <CSSTransition
-            in={activeStep === 2 && !!itineraryData}
-            timeout={300}
-            classNames="fade"
-            unmountOnExit
-          >
+          {itineraryData && (
             <Box>
-              {itineraryData && (
-                <>
-                  <Itinerary activities={itineraryData.activities} />
-                  {/* <Box mt={4}>
-                    <Typography variant="h5" gutterBottom>
-                      Activity Locations
-                    </Typography>
-                    <ActivityMap locations={itineraryData.activities.map((a) => a.location)} />
-                  </Box> */}
-                </>
-              )}
+              <Itinerary activities={itineraryData.activities} />
+              {/* <Box mt={4}>
+                <Typography variant="h5" gutterBottom>
+                  Activity Locations
+                </Typography>
+                <ActivityMap locations={itineraryData.activities.map((a) => a.location)} />
+              </Box> */}
             </Box>
-          </CSSTransition>
+          )}
         </Box>
       </Container>
+
+      <LocationInput
+        open={isLocationModalOpen}
+        onClose={() => setIsLocationModalOpen(false)}
+        onLocationSubmit={handleLocationSubmit}
+        currentLocation={location}
+      />
     </Box>
   );
 }

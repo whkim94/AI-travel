@@ -1,20 +1,46 @@
 import React, { useState } from 'react';
 
-import { Box, Button, TextField, Typography, CircularProgress } from '@mui/material';
-
-import { getRandomLocation } from 'src/utils/randomLocation';
+import MyLocationIcon from '@mui/icons-material/MyLocation';
+import {
+  Box,
+  Button,
+  Dialog,
+  TextField,
+  Typography,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  CircularProgress,
+} from '@mui/material';
 
 interface LocationInputProps {
+  open: boolean;
+  onClose: () => void;
   onLocationSubmit: (location: string) => void;
+  currentLocation: string | null;
 }
 
-const LocationInput: React.FC<LocationInputProps> = ({ onLocationSubmit }) => {
-  const [location, setLocation] = useState('');
+const LocationInput: React.FC<LocationInputProps> = ({
+  open,
+  onClose,
+  onLocationSubmit,
+  currentLocation,
+}) => {
+  const [location, setLocation] = useState(currentLocation || '');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleManualSubmit = () => {
+    if (location.trim()) {
+      onLocationSubmit(location.trim());
+      onClose();
+    }
+  };
 
   const getCurrentLocation = () => {
     if ('geolocation' in navigator) {
       setIsLoading(true);
+      setError(null);
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
@@ -34,86 +60,72 @@ const LocationInput: React.FC<LocationInputProps> = ({ onLocationSubmit }) => {
                 const locationString = `${city}, ${country}`;
                 setLocation(locationString);
                 onLocationSubmit(locationString);
+                onClose();
               }
             }
           } catch (error) {
             console.error('Error fetching location name:', error);
+            setError('Failed to get location. Please enter manually.');
           } finally {
             setIsLoading(false);
           }
         },
         (error) => {
           console.error('Error getting location:', error);
+          setError('Unable to get your location. Please enter manually.');
           setIsLoading(false);
         }
       );
     } else {
-      alert('Geolocation is not supported by your browser');
-    }
-  };
-
-  const getRandomLocationHandler = () => {
-    const randomLoc = getRandomLocation();
-    setLocation(randomLoc);
-    onLocationSubmit(randomLoc);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (location) {
-      onLocationSubmit(location);
+      setError('Geolocation is not supported by your browser. Please enter location manually.');
     }
   };
 
   return (
-    <Box sx={{ mt: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        Choose Your Location
-      </Typography>
-      <Button
-        fullWidth
-        variant="outlined"
-        onClick={getCurrentLocation}
-        disabled={isLoading}
-        sx={{ mb: 2 }}
-      >
-        {isLoading ? <CircularProgress size={24} /> : 'Use Current Location'}
-      </Button>
-      <Button
-        fullWidth
-        variant="outlined"
-        onClick={getRandomLocationHandler}
-        disabled={isLoading}
-        sx={{ mb: 2 }}
-      >
-        Get Random Location
-      </Button>
-      <Typography variant="body2" gutterBottom>
-        Or enter a location manually:
-      </Typography>
-      <Box component="form" onSubmit={handleSubmit} noValidate>
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Change Location</DialogTitle>
+      <DialogContent>
         <TextField
-          margin="normal"
-          required
-          fullWidth
+          autoFocus
+          margin="dense"
           id="location"
           label="Location"
-          name="location"
+          type="text"
+          fullWidth
+          variant="outlined"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           disabled={isLoading}
         />
         <Button
-          type="submit"
           fullWidth
-          variant="contained"
-          disabled={isLoading || !location}
+          variant="outlined"
+          color="primary"
+          onClick={getCurrentLocation}
+          disabled={isLoading}
+          startIcon={<MyLocationIcon />}
           sx={{ mt: 2 }}
         >
-          Confirm Location
+          Use Current Location
         </Button>
-      </Box>
-    </Box>
+        {error && (
+          <Typography color="error" sx={{ mt: 2 }}>
+            {error}
+          </Typography>
+        )}
+        {isLoading && (
+          <Box display="flex" justifyContent="center" mt={2}>
+            <CircularProgress />
+          </Box>
+        )}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleManualSubmit} disabled={!location.trim() || isLoading}>
+          Confirm
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
