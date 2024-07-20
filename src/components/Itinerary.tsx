@@ -1,16 +1,22 @@
+import React from 'react';
 import Image from 'next/image';
-import React, { useState } from 'react';
 
+import LightbulbIcon from '@mui/icons-material/Lightbulb';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import {
-  List,
+  Box,
   Card,
+  Grid,
   Paper,
-  ListItem,
+  useTheme,
   CardMedia,
   Typography,
   CardContent,
-  ListItemText,
 } from '@mui/material';
+
+import { getContrastColor } from 'src/utils/colorUtils';
 
 interface ItineraryActivity {
   title: string;
@@ -33,42 +39,58 @@ interface ItineraryProps {
 }
 
 function ActivityDetail({ activity }: { activity: ItineraryActivity }) {
-  const [imgSrc, setImgSrc] = useState(activity.imageUrl);
+  const theme = useTheme();
+  const backgroundColor = theme.palette.background.paper;
+  const iconColor = getContrastColor(backgroundColor);
 
   return (
     <Card sx={{ mb: 3 }}>
       <CardMedia component="div" sx={{ position: 'relative', height: 200 }}>
-        <Image
-          src={imgSrc}
-          alt={activity.title}
-          layout="fill"
-          objectFit="cover"
-          onError={() => setImgSrc('/assets/images/placeholder-image.jpg')}
-        />
+        <Image src={activity.imageUrl} alt={activity.title} layout="fill" objectFit="cover" />
       </CardMedia>
       <CardContent>
         <Typography variant="h6" gutterBottom>
           {activity.title}
         </Typography>
-        <Typography variant="body1" gutterBottom>
+        <Typography variant="body2" color="text.secondary" paragraph>
           {activity.activity}
         </Typography>
-        <Typography variant="subtitle1" gutterBottom>
-          Location: {activity.location.name}
-        </Typography>
-        <Typography variant="body2" gutterBottom>
-          Address: {activity.location.address}
-        </Typography>
-        <Typography variant="subtitle2" gutterBottom>
-          Additional Information:
-        </Typography>
-        <List dense>
-          {Object.entries(activity.additionalInfo).map(([key, value]) => (
-            <ListItem key={key}>
-              <ListItemText primary={`${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`} />
-            </ListItem>
-          ))}
-        </List>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Box display="flex" alignItems="center">
+              <LocationOnIcon sx={{ mr: 1, color: iconColor }} />
+              <Typography variant="body2">
+                {activity.location.name}, {activity.location.address}
+              </Typography>
+            </Box>
+          </Grid>
+          {activity.additionalInfo.cost && (
+            <Grid item xs={12}>
+              <Box display="flex" alignItems="center">
+                <AttachMoneyIcon sx={{ mr: 1, color: iconColor }} />
+                <Typography variant="body2">Cost: {activity.additionalInfo.cost}</Typography>
+              </Box>
+            </Grid>
+          )}
+          {activity.additionalInfo.duration && (
+            <Grid item xs={12}>
+              <Box display="flex" alignItems="center">
+                <AccessTimeIcon sx={{ mr: 1, color: iconColor }} />
+                <Typography variant="body2">
+                  Duration: {activity.additionalInfo.duration}
+                </Typography>
+              </Box>
+            </Grid>
+          )}
+          {activity.additionalInfo.tips && (
+            <Grid item xs={12}>
+              <Box display="flex" alignItems="flex-start">
+                <LightbulbIcon sx={{ mr: 1, mt: 0.5, color: iconColor }} />
+                <Typography variant="body2">Tip: {activity.additionalInfo.tips}</Typography>
+              </Box>
+            </Grid>
+          )}
+        </Grid>
       </CardContent>
     </Card>
   );
@@ -80,8 +102,8 @@ export default function Itinerary({ activities }: ItineraryProps) {
       <Typography variant="h5" component="h2" gutterBottom>
         Your Personalized Itinerary
       </Typography>
-      {activities.map((item, index) => (
-        <ActivityDetail key={index} activity={item} />
+      {activities.map((activity, index) => (
+        <ActivityDetail key={index} activity={activity} />
       ))}
     </Paper>
   );
