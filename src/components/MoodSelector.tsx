@@ -10,6 +10,16 @@ const moods = [
   { emoji: '🤔', name: 'Curious', color: '#87CEFA' },
   { emoji: '😴', name: 'Tired', color: '#DDA0DD' },
   { emoji: '😎', name: 'Adventurous', color: '#FFA500' },
+  { emoji: '🥳', name: 'Excited', color: '#FF69B4' },
+  { emoji: '😌', name: 'Peaceful', color: '#E6E6FA' },
+  { emoji: '🤓', name: 'Intellectual', color: '#B0C4DE' },
+  { emoji: '🌟', name: 'Inspired', color: '#FFD700' },
+  { emoji: '🏃‍♂️', name: 'Energetic', color: '#7CFC00' },
+  { emoji: '🧘', name: 'Mindful', color: '#E0FFFF' },
+  { emoji: '🎭', name: 'Creative', color: '#FF7F50' },
+  { emoji: '🌿', name: 'Nature-loving', color: '#90EE90' },
+  { emoji: '🍽️', name: 'Foodie', color: '#F08080' },
+  { emoji: '📚', name: 'Studious', color: '#F4A460' },
 ];
 
 interface MoodSelectorProps {
