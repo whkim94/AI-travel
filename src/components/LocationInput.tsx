@@ -63,15 +63,15 @@ const LocationInput: React.FC<LocationInputProps> = ({
                 onClose();
               }
             }
-          } catch (error) {
-            console.error('Error fetching location name:', error);
+          } catch (err) {
+            console.error('Error fetching location name:', err);
             setError('Failed to get location. Please enter manually.');
           } finally {
             setIsLoading(false);
           }
         },
-        (error) => {
-          console.error('Error getting location:', error);
+        (err) => {
+          console.error('Error getting location:', err);
           setError('Unable to get your location. Please enter manually.');
           setIsLoading(false);
         }

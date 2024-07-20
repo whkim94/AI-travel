@@ -38,6 +38,7 @@ module.exports = {
     'no-underscore-dangle': 0,
     'no-restricted-exports': 0,
     'no-await-in-loop': 0,
+    'no-bitwise': 0,
     'no-plusplus': 0,
     'no-promise-executor-return': 0,
     'no-undef': 0,
