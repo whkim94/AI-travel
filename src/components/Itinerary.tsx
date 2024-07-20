@@ -43,7 +43,7 @@ function ActivityDetail({ activity }: { activity: ItineraryActivity }) {
           alt={activity.title}
           layout="fill"
           objectFit="cover"
-          onError={() => setImgSrc('/placeholder-image.jpg')}
+          onError={() => setImgSrc('/assets/images/placeholder-image.jpg')}
         />
       </CardMedia>
       <CardContent>
