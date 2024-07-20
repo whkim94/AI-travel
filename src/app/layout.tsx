@@ -1,3 +1,6 @@
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+
 import { Box, Link, Typography } from '@mui/material';
 
 import { ThemeProvider } from 'src/theme/theme-provider';
@@ -29,6 +32,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Typography>
           </Box>
         </ThemeProvider>
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
