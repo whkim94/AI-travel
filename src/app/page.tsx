@@ -79,16 +79,16 @@ export default function Home() {
                 throw new Error('Unable to determine location from coordinates');
               }
             }
-          } catch (error) {
-            console.error('Error fetching location name:', error);
+          } catch (err) {
+            console.error('Error fetching location name:', err);
             setError('Failed to get location automatically. Please enter manually.');
             setIsLocationModalOpen(true);
           } finally {
             setLoading(false);
           }
         },
-        (error) => {
-          console.error('Error getting location:', error);
+        (err) => {
+          console.error('Error getting location:', err);
           setError('Unable to get your location automatically. Please enter manually.');
           setIsLocationModalOpen(true);
           setLoading(false);
