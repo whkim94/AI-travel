@@ -53,9 +53,10 @@ export async function POST(request: Request) {
       throw new Error('Invalid response structure from Gemini API');
     }
 
-    // Fetch images for each activity
+    // Fetch images for each activity based on its specific location
     for (let i = 0; i < data.activities.length; i++) {
-      const imageUrl = await searchImage(`${data.activities[i].activity} ${location}`);
+      const activityLocation = data.activities[i].location.name;
+      const imageUrl = await searchImage(activityLocation);
       data.activities[i].imageUrl = imageUrl;
     }
 

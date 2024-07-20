@@ -4,9 +4,20 @@ import React, { useState, useEffect } from 'react';
 
 import RefreshIcon from '@mui/icons-material/Refresh';
 import EditLocationIcon from '@mui/icons-material/EditLocation';
-import { Box, Alert, Button, Container, Typography, CircularProgress } from '@mui/material';
+import {
+  Box,
+  Alert,
+  Paper,
+  Button,
+  useTheme,
+  Container,
+  Typography,
+  CircularProgress,
+} from '@mui/material';
 
 import Itinerary from 'src/components/Itinerary';
+import HeroSection from 'src/components/HeroSection';
+import ActivityMap from 'src/components/ActivityMap';
 import MoodSelector from 'src/components/MoodSelector';
 import LocationInput from 'src/components/LocationInput';
 
@@ -39,13 +50,14 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
 
+  const theme = useTheme();
+
   useEffect(() => {
     getCurrentLocation();
   }, []);
 
   const getCurrentLocation = () => {
     if ('geolocation' in navigator) {
-      setLoading(true);
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
@@ -63,29 +75,36 @@ export default function Home() {
               const { country } = data.address;
               if (city && country) {
                 setLocation(`${city}, ${country}`);
+              } else {
+                throw new Error('Unable to determine location from coordinates');
               }
             }
           } catch (error) {
             console.error('Error fetching location name:', error);
-            setError('Failed to get location. Please enter manually.');
+            setError('Failed to get location automatically. Please enter manually.');
+            setIsLocationModalOpen(true);
           } finally {
             setLoading(false);
           }
         },
         (error) => {
           console.error('Error getting location:', error);
-          setError('Unable to get your location. Please enter manually.');
+          setError('Unable to get your location automatically. Please enter manually.');
+          setIsLocationModalOpen(true);
           setLoading(false);
         }
       );
     } else {
       setError('Geolocation is not supported by your browser. Please enter location manually.');
+      setIsLocationModalOpen(true);
       setLoading(false);
     }
   };
 
   const handleLocationSubmit = (newLocation: string) => {
     setLocation(newLocation);
+    setIsLocationModalOpen(false);
+    setError(null);
   };
 
   const handleMoodSelect = async (selectedMood: string) => {
@@ -111,10 +130,13 @@ export default function Home() {
         throw new Error('Failed to fetch itinerary');
       }
       const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
       setItineraryData(data);
     } catch (err) {
       console.error('Error fetching itinerary:', err);
-      setError('Failed to generate itinerary. Please try again.');
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
     } finally {
       setLoading(false);
     }
@@ -123,6 +145,7 @@ export default function Home() {
   const handleReset = () => {
     setItineraryData(null);
     setMood(null);
+    setLocation(null);
     setError(null);
     getCurrentLocation();
   };
@@ -135,36 +158,44 @@ export default function Home() {
   }, [itineraryData]);
 
   return (
-    <Box>
-      {/* <HeroSection /> */}
+    <Box
+      sx={{
+        backgroundColor: theme.palette.background.default,
+        minHeight: '100vh',
+        color: theme.palette.text.primary,
+      }}
+    >
+      <HeroSection />
       <Container maxWidth="md">
-        <Box sx={{ my: 4 }}>
+        <Paper elevation={3} sx={{ my: 4, p: 3, backgroundColor: theme.palette.background.paper }}>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
             <Typography variant="h4" component="h1">
               MoodTrek
             </Typography>
             <Box>
               <Button
-                variant="outlined"
+                variant="contained"
                 startIcon={<EditLocationIcon />}
                 onClick={() => setIsLocationModalOpen(true)}
                 sx={{ mr: 1 }}
               >
                 Change Location
               </Button>
-              <Button variant="outlined" startIcon={<RefreshIcon />} onClick={handleReset}>
+              <Button variant="contained" startIcon={<RefreshIcon />} onClick={handleReset}>
                 Start Over
               </Button>
             </Box>
           </Box>
 
           {location && (
-            <Typography variant="subtitle1" gutterBottom>
+            <Typography
+              variant="subtitle1"
+              gutterBottom
+              sx={{ color: theme.palette.text.secondary }}
+            >
               Current Location: {location}
             </Typography>
           )}
-
-          {!itineraryData && <MoodSelector onMoodSelect={handleMoodSelect} loading={loading} />}
 
           {loading && (
             <Box display="flex" justifyContent="center" my={2}>
@@ -178,18 +209,22 @@ export default function Home() {
             </Alert>
           )}
 
+          {location && !itineraryData && !loading && (
+            <MoodSelector onMoodSelect={handleMoodSelect} loading={loading} />
+          )}
+
           {itineraryData && (
             <Box>
               <Itinerary activities={itineraryData.activities} />
-              {/* <Box mt={4}>
+              <Box mt={4}>
                 <Typography variant="h5" gutterBottom>
                   Activity Locations
                 </Typography>
                 <ActivityMap locations={itineraryData.activities.map((a) => a.location)} />
-              </Box> */}
+              </Box>
             </Box>
           )}
-        </Box>
+        </Paper>
       </Container>
 
       <LocationInput
