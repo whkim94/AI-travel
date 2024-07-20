@@ -45,7 +45,7 @@ function ActivityDetail({ activity }: { activity: ItineraryActivity }) {
 
   return (
     <Card sx={{ mb: 3 }}>
-      <CardMedia component="div" sx={{ position: 'relative', height: 200 }}>
+      <CardMedia component="div" sx={{ position: 'relative', height: 500 }}>
         <Image src={activity.imageUrl} alt={activity.title} layout="fill" objectFit="cover" />
       </CardMedia>
       <CardContent>

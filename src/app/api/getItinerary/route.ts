@@ -5,6 +5,7 @@ import { searchImage } from 'src/utils/imageSearch';
 import { generateItineraryPrompt } from 'src/utils/itineraryPrompt';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
+const { GEMINI_MODEL_VERSION } = process.env;
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 2000; // 2 seconds
@@ -15,7 +16,7 @@ async function sleep(ms: number) {
 
 async function fetchItineraryFromGemini(prompt: string, retryCount = 0): Promise<string> {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
+    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL_VERSION });
     const result = await model.generateContent(prompt);
     const response = await result.response;
     return response.text();
