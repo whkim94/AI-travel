@@ -4,10 +4,10 @@ import { Mood as MoodIcon } from '@mui/icons-material';
 import { AppBar, Toolbar, Container, Typography } from '@mui/material';
 
 const Header: React.FC = () => (
-  <AppBar position="static" color="primary">
-    <Container maxWidth="xl">
+  <AppBar position="static" color="transparent" elevation={0}>
+    <Container maxWidth={false} sx={{ m: 2 }}>
       <Toolbar disableGutters>
-        <MoodIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+        <MoodIcon sx={{ mr: 1 }} />
         <Typography
           variant="h6"
           noWrap
@@ -15,7 +15,6 @@ const Header: React.FC = () => (
           href="/"
           sx={{
             mr: 2,
-            display: { xs: 'none', md: 'flex' },
             fontFamily: 'monospace',
             fontWeight: 700,
             letterSpacing: '.3rem',

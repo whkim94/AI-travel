@@ -35,14 +35,6 @@ export function createDynamicTheme(colorCode: string): Theme {
           },
         },
       },
-      MuiAppBar: {
-        styleOverrides: {
-          root: {
-            backgroundColor: colorCode,
-            color: contrastColor,
-          },
-        },
-      },
     },
   });
 }
