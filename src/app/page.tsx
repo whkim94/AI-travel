@@ -4,22 +4,14 @@ import React, { useState, useEffect } from 'react';
 
 import RefreshIcon from '@mui/icons-material/Refresh';
 import EditLocationIcon from '@mui/icons-material/EditLocation';
-import {
-  Box,
-  Alert,
-  Paper,
-  Button,
-  useTheme,
-  Container,
-  Typography,
-  CircularProgress,
-} from '@mui/material';
+import { Box, Alert, Paper, Button, useTheme, Container, Typography } from '@mui/material';
 
 import Itinerary from 'src/components/Itinerary';
 import HeroSection from 'src/components/HeroSection';
 import ActivityMap from 'src/components/ActivityMap';
 import MoodSelector from 'src/components/MoodSelector';
 import LocationInput from 'src/components/LocationInput';
+import FullPageLoader from 'src/components/FullPageLoader';
 
 interface ItineraryActivity {
   title: string;
@@ -165,6 +157,7 @@ export default function Home() {
         color: theme.palette.text.primary,
       }}
     >
+      {loading && <FullPageLoader message="Generating your personalized itinerary..." />}
       <HeroSection />
       <Container maxWidth="md">
         <Paper elevation={3} sx={{ my: 4, p: 3, backgroundColor: theme.palette.background.paper }}>
@@ -197,11 +190,11 @@ export default function Home() {
             </Typography>
           )}
 
-          {loading && (
+          {/* {loading && (
             <Box display="flex" justifyContent="center" my={2}>
               <CircularProgress />
             </Box>
-          )}
+          )} */}
 
           {error && (
             <Alert severity="error" sx={{ mt: 2 }}>
