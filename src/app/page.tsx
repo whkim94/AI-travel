@@ -167,13 +167,6 @@ export default function Home() {
       >
         <Container maxWidth="md">
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} pt={2}>
-            {/* <Typography
-              variant="h4"
-              component="h1"
-              sx={{ color: itineraryData ? theme.palette.text.primary : 'white' }}
-            >
-              MoodTrek
-            </Typography> */}
             <Box>
               <Button
                 variant="outlined"
