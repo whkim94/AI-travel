@@ -13,7 +13,7 @@ export function createDynamicTheme(colorCode: string): Theme {
         contrastText: contrastColor,
       },
       background: {
-        default: isLightColor ? '#ffffff' : '#121212',
+        default: colorCode,
         paper: isLightColor ? '#f5f5f5' : '#1e1e1e',
       },
       text: {
@@ -21,20 +21,20 @@ export function createDynamicTheme(colorCode: string): Theme {
         secondary: isLightColor ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.6)',
       },
     },
-    components: {
-      MuiButton: {
-        styleOverrides: {
-          root: {
-            backgroundColor: colorCode,
-            color: contrastColor,
-            '&:hover': {
-              backgroundColor: isLightColor
-                ? `rgba(${parseInt(colorCode.slice(1, 3), 16)}, ${parseInt(colorCode.slice(3, 5), 16)}, ${parseInt(colorCode.slice(5, 7), 16)}, 0.8)`
-                : `rgba(${parseInt(colorCode.slice(1, 3), 16)}, ${parseInt(colorCode.slice(3, 5), 16)}, ${parseInt(colorCode.slice(5, 7), 16)}, 1.2)`,
-            },
-          },
-        },
-      },
-    },
+    // components: {
+    //   MuiButton: {
+    //     styleOverrides: {
+    //       root: {
+    //         backgroundColor: colorCode,
+    //         color: contrastColor,
+    //         '&:hover': {
+    //           backgroundColor: isLightColor
+    //             ? `rgba(${parseInt(colorCode.slice(1, 3), 16)}, ${parseInt(colorCode.slice(3, 5), 16)}, ${parseInt(colorCode.slice(5, 7), 16)}, 0.8)`
+    //             : `rgba(${parseInt(colorCode.slice(1, 3), 16)}, ${parseInt(colorCode.slice(3, 5), 16)}, ${parseInt(colorCode.slice(5, 7), 16)}, 1.2)`,
+    //         },
+    //       },
+    //     },
+    //   },
+    // },
   });
 }
