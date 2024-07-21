@@ -66,8 +66,8 @@ const MoodSelector: React.FC<MoodSelectorProps> = ({ onMoodSelect, loading }) =>
   };
 
   return (
-    <Box sx={{ position: 'relative', height: '400px', width: '400px', margin: 'auto' }}>
-      <Typography
+    <Box sx={{ position: 'relative', height: '500px', width: '400px', margin: 'auto' }}>
+      {/* <Typography
         variant="h5"
         gutterBottom
         align="center"
@@ -80,72 +80,70 @@ const MoodSelector: React.FC<MoodSelectorProps> = ({ onMoodSelect, loading }) =>
         }}
       >
         How are you feeling today?
-      </Typography>
+      </Typography> */}
 
-      <Box sx={{ position: 'relative', width: '1', height: '600px', margin: '20px 0' }}>
-        <AnimatedButton
-          onClick={toggleMenu}
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '80px',
-            height: '80px',
-            borderRadius: '50%',
-            fontSize: '24px',
-          }}
-        >
-          {isOpen ? '✖' : '🎭'}
-        </AnimatedButton>
+      <AnimatedButton
+        onClick={toggleMenu}
+        sx={{
+          position: 'absolute',
+          top: '30%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '80px',
+          height: '80px',
+          borderRadius: '50%',
+          fontSize: '24px',
+        }}
+      >
+        {isOpen ? '✖' : '🎭'}
+      </AnimatedButton>
 
-        {moods.map((mood, index) => {
-          const angle = (index / moods.length) * 2 * Math.PI;
-          const x = Math.cos(angle) * 150; // Adjust this value to change the circle size
-          const y = Math.sin(angle) * 150; // Adjust this value to change the circle size
-          return (
-            <Tooltip key={mood.name} title={mood.name} placement="top" arrow>
-              <Button
-                key={mood.name}
-                onClick={() => handleMoodSelect(mood.name)}
-                disabled={loading || !isOpen}
-                sx={{
-                  position: 'absolute',
-                  top: 'calc(50% - 25px)', // Half of the button height
-                  left: 'calc(50% - 30px)', // Half of the button width
-                  transform: `translate(${x}px, ${y}px)`,
-                  width: '60px',
-                  height: '60px',
-                  borderRadius: '50%',
+      {moods.map((mood, index) => {
+        const angle = (index / moods.length) * 2 * Math.PI;
+        const x = Math.cos(angle) * 150; // Adjust this value to change the circle size
+        const y = Math.sin(angle) * 150; // Adjust this value to change the circle size
+        return (
+          <Tooltip key={mood.name} title={mood.name} placement="top" arrow>
+            <Button
+              key={mood.name}
+              onClick={() => handleMoodSelect(mood.name)}
+              disabled={loading || !isOpen}
+              sx={{
+                position: 'absolute',
+                top: 'calc(30% - 25px)', // Half of the button height
+                left: 'calc(50% - 30px)', // Half of the button width
+                transform: `translate(${x}px, ${y}px)`,
+                width: '60px',
+                height: '60px',
+                borderRadius: '50%',
+                backgroundColor: mood.color,
+                color: 'black',
+                opacity: isOpen ? 1 : 0,
+                transition: 'all 0.3s ease-in-out',
+                animation: isOpen ? `${popAnimation} 0.5s ease-out` : 'none',
+                '&:hover': {
                   backgroundColor: mood.color,
-                  color: 'black',
-                  opacity: isOpen ? 1 : 0,
-                  transition: 'all 0.3s ease-in-out',
-                  animation: isOpen ? `${popAnimation} 0.5s ease-out` : 'none',
-                  '&:hover': {
-                    backgroundColor: mood.color,
-                    opacity: 0.8,
-                  },
-                }}
-              >
-                <Typography variant="h6">{mood.emoji}</Typography>
-              </Button>
-            </Tooltip>
-          );
-        })}
+                  opacity: 0.8,
+                },
+              }}
+            >
+              <Typography variant="h6">{mood.emoji}</Typography>
+            </Button>
+          </Tooltip>
+        );
+      })}
 
-        <AnimatedButton
-          onClick={() => setDialogOpen(true)}
-          sx={{
-            position: 'absolute',
-            bottom: 0,
-            left: '50%',
-            transform: 'translateX(-50%)',
-          }}
-        >
-          Type Your Own Mood
-        </AnimatedButton>
-      </Box>
+      <AnimatedButton
+        onClick={() => setDialogOpen(true)}
+        sx={{
+          position: 'absolute',
+          bottom: 0,
+          left: '50%',
+          transform: 'translateX(-50%)',
+        }}
+      >
+        Type Your Own Mood
+      </AnimatedButton>
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogTitle>Enter Your Mood</DialogTitle>

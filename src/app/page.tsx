@@ -4,10 +4,19 @@ import React, { useState, useEffect } from 'react';
 
 import RefreshIcon from '@mui/icons-material/Refresh';
 import EditLocationIcon from '@mui/icons-material/EditLocation';
-import { Box, Alert, Button, useTheme, Container, Typography } from '@mui/material';
+import {
+  Box,
+  Alert,
+  Button,
+  AppBar,
+  Toolbar,
+  useTheme,
+  Container,
+  Typography,
+} from '@mui/material';
 
 import Itinerary from 'src/components/Itinerary';
-import HeroSection from 'src/components/HeroSection';
+// import HeroSection from 'src/components/HeroSection';
 import ActivityMap from 'src/components/ActivityMap';
 import MoodSelector from 'src/components/MoodSelector';
 import LocationInput from 'src/components/LocationInput';
@@ -155,7 +164,7 @@ export default function Home() {
       {!itineraryData && <AnimatedBackground />}
       {loading && <FullPageLoader message="Generating your personalized itinerary..." />}
 
-      {!itineraryData && <HeroSection />}
+      {/* {!itineraryData && <HeroSection />} */}
 
       <Box
         sx={{
@@ -165,36 +174,20 @@ export default function Home() {
           zIndex: 1,
         }}
       >
-        <Container maxWidth="md">
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} pt={2}>
-            <Box>
-              <Button
-                variant="outlined"
-                startIcon={<EditLocationIcon />}
-                onClick={() => setIsLocationModalOpen(true)}
-                sx={{ mr: 1 }}
-              >
-                Change Location
-              </Button>
-
-              {itineraryData && (
-                <Button variant="contained" startIcon={<RefreshIcon />} onClick={handleReset}>
-                  Start Over
-                </Button>
-              )}
-            </Box>
-          </Box>
-
-          {location && (
-            <Typography
-              variant="subtitle1"
-              gutterBottom
-              sx={{ color: itineraryData ? theme.palette.text.secondary : 'white' }}
+        <AppBar position="static" color="transparent" elevation={0}>
+          <Toolbar>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
+            <Button
+              color="inherit"
+              startIcon={<EditLocationIcon />}
+              onClick={() => setIsLocationModalOpen(true)}
             >
-              Current Location: {location}
-            </Typography>
-          )}
+              {location || 'Set Location'}
+            </Button>
+          </Toolbar>
+        </AppBar>
 
+        <Container maxWidth="md">
           {error && (
             <Alert severity="error" sx={{ mt: 2 }}>
               {error}
@@ -207,6 +200,9 @@ export default function Home() {
 
           {itineraryData && (
             <Box sx={{ backgroundColor: theme.palette.background.default, p: 2, borderRadius: 2 }}>
+              <Button variant="contained" startIcon={<RefreshIcon />} onClick={handleReset}>
+                Start Over
+              </Button>
               <Itinerary activities={itineraryData.activities} />
               <Box mt={4}>
                 <Typography variant="h5" gutterBottom>

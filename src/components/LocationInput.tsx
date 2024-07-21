@@ -87,6 +87,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
       <DialogContent>
         <TextField
           autoFocus
+          autoComplete="off"
           margin="dense"
           id="location"
           label="Location"
