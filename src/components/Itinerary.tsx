@@ -5,7 +5,7 @@ import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import { Box, Card, Grid, Link, Paper, CardMedia, Typography, CardContent } from '@mui/material';
+import { Box, Card, Grid, Link, CardMedia, Typography, CardContent } from '@mui/material';
 
 interface ItineraryActivity {
   title: string;
@@ -35,7 +35,14 @@ function ActivityCard({ activity }: { activity: ItineraryActivity }) {
   const mapUrl = getGoogleMapsUrl(`${activity.location.name}, ${activity.location.address}`);
 
   return (
-    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Card
+      sx={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        border: '1px solid',
+      }}
+    >
       <CardMedia component="div" sx={{ position: 'relative', height: 200 }}>
         <Image src={activity.imageUrl} alt={activity.title} layout="fill" objectFit="cover" />
       </CardMedia>
@@ -88,7 +95,7 @@ function ActivityCard({ activity }: { activity: ItineraryActivity }) {
 
 export default function Itinerary({ activities }: ItineraryProps) {
   return (
-    <Paper elevation={3} sx={{ mt: 2, p: 2 }}>
+    <Box sx={{ mt: 2 }}>
       <Typography variant="h5" component="h2" gutterBottom>
         Your Personalized Itinerary
       </Typography>
@@ -99,6 +106,6 @@ export default function Itinerary({ activities }: ItineraryProps) {
           </Grid>
         ))}
       </Grid>
-    </Paper>
+    </Box>
   );
 }
