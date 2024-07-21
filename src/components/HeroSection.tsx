@@ -10,6 +10,8 @@ const HeroSection: React.FC = () => (
       height: '25vh',
       display: 'flex',
       alignItems: 'center',
+      color: 'white',
+      textShadow: '2px 2px 4px rgba(0,0,0,0.5)', // Add text shadow for better readability
     }}
   >
     <Container>

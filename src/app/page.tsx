@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 
 import RefreshIcon from '@mui/icons-material/Refresh';
 import EditLocationIcon from '@mui/icons-material/EditLocation';
-import { Box, Alert, Paper, Button, useTheme, Container, Typography } from '@mui/material';
+import { Box, Alert, Button, useTheme, Container, Typography } from '@mui/material';
 
 import Itinerary from 'src/components/Itinerary';
 import HeroSection from 'src/components/HeroSection';
@@ -12,6 +12,7 @@ import ActivityMap from 'src/components/ActivityMap';
 import MoodSelector from 'src/components/MoodSelector';
 import LocationInput from 'src/components/LocationInput';
 import FullPageLoader from 'src/components/FullPageLoader';
+import AnimatedBackground from 'src/components/AnimatedBackground';
 
 interface ItineraryActivity {
   title: string;
@@ -150,33 +151,44 @@ export default function Home() {
   }, [itineraryData]);
 
   return (
-    <Box
-      sx={{
-        backgroundColor: theme.palette.background.default,
-        minHeight: '100vh',
-        color: theme.palette.text.primary,
-      }}
-    >
+    <>
+      {!itineraryData && <AnimatedBackground />}
       {loading && <FullPageLoader message="Generating your personalized itinerary..." />}
-      <HeroSection />
-      <Container maxWidth="md">
-        <Paper elevation={3} sx={{ my: 4, p: 3, backgroundColor: theme.palette.background.paper }}>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-            <Typography variant="h4" component="h1">
+
+      {!itineraryData && <HeroSection />}
+
+      <Box
+        sx={{
+          position: 'relative',
+          minHeight: '100vh',
+          color: theme.palette.text.primary,
+          zIndex: 1,
+        }}
+      >
+        <Container maxWidth="md">
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} pt={2}>
+            {/* <Typography
+              variant="h4"
+              component="h1"
+              sx={{ color: itineraryData ? theme.palette.text.primary : 'white' }}
+            >
               MoodTrek
-            </Typography>
+            </Typography> */}
             <Box>
               <Button
-                variant="contained"
+                variant="outlined"
                 startIcon={<EditLocationIcon />}
                 onClick={() => setIsLocationModalOpen(true)}
                 sx={{ mr: 1 }}
               >
                 Change Location
               </Button>
-              <Button variant="contained" startIcon={<RefreshIcon />} onClick={handleReset}>
-                Start Over
-              </Button>
+
+              {itineraryData && (
+                <Button variant="contained" startIcon={<RefreshIcon />} onClick={handleReset}>
+                  Start Over
+                </Button>
+              )}
             </Box>
           </Box>
 
@@ -184,17 +196,11 @@ export default function Home() {
             <Typography
               variant="subtitle1"
               gutterBottom
-              sx={{ color: theme.palette.text.secondary }}
+              sx={{ color: itineraryData ? theme.palette.text.secondary : 'white' }}
             >
               Current Location: {location}
             </Typography>
           )}
-
-          {/* {loading && (
-            <Box display="flex" justifyContent="center" my={2}>
-              <CircularProgress />
-            </Box>
-          )} */}
 
           {error && (
             <Alert severity="error" sx={{ mt: 2 }}>
@@ -207,7 +213,7 @@ export default function Home() {
           )}
 
           {itineraryData && (
-            <Box>
+            <Box sx={{ backgroundColor: theme.palette.background.default, p: 2, borderRadius: 2 }}>
               <Itinerary activities={itineraryData.activities} />
               <Box mt={4}>
                 <Typography variant="h5" gutterBottom>
@@ -217,15 +223,15 @@ export default function Home() {
               </Box>
             </Box>
           )}
-        </Paper>
-      </Container>
+        </Container>
 
-      <LocationInput
-        open={isLocationModalOpen}
-        onClose={() => setIsLocationModalOpen(false)}
-        onLocationSubmit={handleLocationSubmit}
-        currentLocation={location}
-      />
-    </Box>
+        <LocationInput
+          open={isLocationModalOpen}
+          onClose={() => setIsLocationModalOpen(false)}
+          onLocationSubmit={handleLocationSubmit}
+          currentLocation={location}
+        />
+      </Box>
+    </>
   );
 }
