@@ -34,10 +34,16 @@ export async function searchImage(location: string): Promise<string> {
     const data = await response.json();
 
     if (data.items && data.items.length > 0) {
-      for (const item of data.items) {
-        if (await isValidImageUrl(item.link)) {
-          return item.link;
-        }
+      const validImages = await Promise.all(
+        data.items.map(async (item) => ({
+          url: item.link,
+          isValid: await isValidImageUrl(item.link),
+        }))
+      );
+
+      const firstValidImage = validImages.find((img) => img.isValid);
+      if (firstValidImage) {
+        return firstValidImage.url;
       }
     }
 
