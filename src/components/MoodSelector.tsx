@@ -66,7 +66,7 @@ const MoodSelector: React.FC<MoodSelectorProps> = ({ onMoodSelect, loading }) =>
   };
 
   return (
-    <Box sx={{ position: 'relative', height: '500px', width: '400px', margin: 'auto' }}>
+    <Box sx={{ position: 'relative', height: '500px', width: '100%', margin: 'auto' }}>
       {/* <Typography
         variant="h5"
         gutterBottom
