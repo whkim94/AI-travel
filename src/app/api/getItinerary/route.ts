@@ -46,8 +46,15 @@ export async function POST(request: Request) {
     try {
       data = JSON.parse(text);
     } catch (parseError) {
-      console.error('Error parsing JSON:', parseError);
-      throw new Error('Failed to parse itinerary data');
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        try {
+          data = JSON.parse(jsonMatch[0]);
+        } catch (secondParseError) {
+          console.error('Error parsing extracted JSON:', secondParseError);
+          throw new Error('Failed to parse itinerary data');
+        }
+      }
     }
 
     if (!data.colorCode || !Array.isArray(data.activities) || data.activities.length !== 5) {
