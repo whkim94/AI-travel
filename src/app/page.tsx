@@ -49,9 +49,11 @@ export default function Home() {
   const [mood, setMood] = useState<string | null>(null);
   const [itineraryData, setItineraryData] = useState<ItineraryData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadMoreError, setLoadMoreError] = useState<string | null>(null);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
-
+  const [page, setPage] = useState(1);
   const theme = useTheme();
 
   useEffect(() => {
@@ -114,19 +116,22 @@ export default function Home() {
     await fetchItinerary(selectedMood);
   };
 
-  const fetchItinerary = async (selectedMood: string) => {
+  const fetchItinerary = async (selectedMood: string, pageNum: number = 1) => {
     if (!location) {
       setError('Please set a location first');
       return;
     }
 
-    setLoading(true);
+    setLoading(pageNum === 1);
+    setLoadingMore(pageNum > 1);
     setError(null);
+    setLoadMoreError(null);
+
     try {
       const response = await fetch('/api/getItinerary', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mood: selectedMood, location }),
+        body: JSON.stringify({ mood: selectedMood, location, page: pageNum }),
       });
       if (!response.ok) {
         throw new Error('Failed to fetch itinerary');
@@ -135,12 +140,31 @@ export default function Home() {
       if (data.error) {
         throw new Error(data.error);
       }
-      setItineraryData(data);
+      if (pageNum === 1) {
+        setItineraryData(data);
+      } else {
+        setItineraryData((prevData) => ({
+          ...prevData!,
+          activities: [...prevData!.activities, ...data.activities],
+        }));
+      }
+      setPage(pageNum);
     } catch (err) {
       console.error('Error fetching itinerary:', err);
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      if (pageNum === 1) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      } else {
+        setLoadMoreError(err instanceof Error ? err.message : 'Failed to load more activities');
+      }
     } finally {
       setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  const handleLoadMore = () => {
+    if (mood && location) {
+      fetchItinerary(mood, page + 1);
     }
   };
 
@@ -164,14 +188,13 @@ export default function Home() {
       {!itineraryData && <AnimatedBackground />}
       {loading && <FullPageLoader message="Generating your personalized itinerary..." />}
 
-      {/* {!itineraryData && <HeroSection />} */}
-
       <Box
         sx={{
           position: 'relative',
           minHeight: '100vh',
-          color: theme.palette.text.primary,
+          color: itineraryData ? theme.palette.text.primary : 'white',
           zIndex: 1,
+          backgroundColor: itineraryData ? theme.palette.background.default : 'transparent',
         }}
       >
         <AppBar position="static" color="transparent" elevation={0}>
@@ -199,16 +222,31 @@ export default function Home() {
           )}
 
           {itineraryData && (
-            <Box sx={{ backgroundColor: theme.palette.background.default, p: 2, borderRadius: 2 }}>
-              <Button variant="contained" startIcon={<RefreshIcon />} onClick={handleReset}>
-                Start Over
-              </Button>
+            <Box sx={{ mt: 4 }}>
               <Itinerary activities={itineraryData.activities} />
               <Box mt={4}>
                 <Typography variant="h5" gutterBottom>
-                  Activity Locations
+                  {/* Activity Locations */}
                 </Typography>
                 <ActivityMap locations={itineraryData.activities.map((a) => a.location)} />
+              </Box>
+              {loadMoreError && (
+                <Alert severity="error" sx={{ mt: 2 }}>
+                  {loadMoreError}
+                </Alert>
+              )}
+              <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+                <Button
+                  variant="contained"
+                  onClick={handleLoadMore}
+                  disabled={loadingMore}
+                  sx={{ mr: 2 }}
+                >
+                  {loadingMore ? 'Loading...' : 'Load More'}
+                </Button>
+                <Button variant="contained" startIcon={<RefreshIcon />} onClick={handleReset}>
+                  Start Over
+                </Button>
               </Box>
             </Box>
           )}

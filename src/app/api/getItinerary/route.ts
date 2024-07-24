@@ -9,6 +9,7 @@ const { GEMINI_MODEL_VERSION } = process.env;
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 2000; // 2 seconds
+const ACTIVITIES_PER_PAGE = 5;
 
 async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -33,13 +34,13 @@ async function fetchItineraryFromGemini(prompt: string, retryCount = 0): Promise
 
 export async function POST(request: Request) {
   try {
-    const { mood, location } = await request.json();
+    const { mood, location, page = 1 } = await request.json();
 
     if (!mood || typeof mood !== 'string' || !location || typeof location !== 'string') {
       return NextResponse.json({ error: 'Invalid mood or location provided' }, { status: 400 });
     }
 
-    const prompt = generateItineraryPrompt(mood, location);
+    const prompt = generateItineraryPrompt(mood, location, ACTIVITIES_PER_PAGE);
     const text = await fetchItineraryFromGemini(prompt);
 
     let data;
@@ -57,15 +58,30 @@ export async function POST(request: Request) {
       }
     }
 
-    if (!data.colorCode || !Array.isArray(data.activities) || data.activities.length !== 5) {
+    if (
+      !data.colorCode ||
+      !Array.isArray(data.activities) ||
+      data.activities.length !== ACTIVITIES_PER_PAGE
+    ) {
       throw new Error('Invalid response structure from Gemini API');
     }
 
     // Fetch images for each activity based on its specific location
     for (let i = 0; i < data.activities.length; i++) {
-      const activityLocation = data.activities[i].location.name;
-      const imageUrl = await searchImage(activityLocation);
-      data.activities[i].imageUrl = imageUrl;
+      try {
+        const activityLocation = data.activities[i].location.name;
+        const imageUrl = await searchImage(activityLocation);
+        data.activities[i].imageUrl = imageUrl;
+      } catch (error) {
+        if (error.message === 'Daily limit reached') {
+          return NextResponse.json(
+            { error: 'Image search daily limit reached. Please try again tomorrow.' },
+            { status: 429 }
+          );
+        }
+        console.error('Error fetching image:', error);
+        data.activities[i].imageUrl = '/placeholder-image.jpg';
+      }
     }
 
     return NextResponse.json(data);
