@@ -5,7 +5,7 @@ import { AppBar, Toolbar, Container, Typography } from '@mui/material';
 
 const Header: React.FC = () => (
   <AppBar position="static" color="transparent" elevation={0}>
-    <Container maxWidth={false} sx={{ m: 2 }}>
+    <Container maxWidth={false} sx={{ py: 2 }}>
       <Toolbar disableGutters>
         <MoodIcon sx={{ mr: 1 }} />
         <Typography
