@@ -124,7 +124,6 @@ export default function Home() {
     setMood(null);
     setLocation(null);
     setError(null);
-    getCurrentLocation();
   };
 
   useEffect(() => {
