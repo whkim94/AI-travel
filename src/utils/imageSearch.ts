@@ -22,7 +22,7 @@ export async function searchImage(location: string): Promise<string> {
 
     const data = await response.json();
 
-    if (data.items && data.items.length > 0 && data.items[0].link) {
+    if (data?.items[0]?.link) {
       return data.items[0].link;
     }
 
