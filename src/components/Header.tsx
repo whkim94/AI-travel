@@ -7,7 +7,7 @@ const Header: React.FC = () => (
   <AppBar position="static" color="transparent" elevation={0}>
     <Container maxWidth={false} sx={{ py: 2 }}>
       <Toolbar disableGutters>
-        <MoodIcon sx={{ mr: 1 }} />
+        <MoodIcon sx={{ ml: 3, mr: 1 }} />
         <Typography
           variant="h6"
           noWrap
