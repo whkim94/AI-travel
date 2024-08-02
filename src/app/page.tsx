@@ -56,55 +56,6 @@ export default function Home() {
   const [page, setPage] = useState(1);
   const theme = useTheme();
 
-  useEffect(() => {
-    getCurrentLocation();
-  }, []);
-
-  const getCurrentLocation = () => {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const { latitude, longitude } = position.coords;
-          try {
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`
-            );
-            const data = await response.json();
-            if (data) {
-              const city =
-                data.address.city ||
-                data.address.town ||
-                data.address.village ||
-                data.address.hamlet;
-              const { country } = data.address;
-              if (city && country) {
-                setLocation(`${city}, ${country}`);
-              } else {
-                throw new Error('Unable to determine location from coordinates');
-              }
-            }
-          } catch (err) {
-            console.error('Error fetching location name:', err);
-            setError('Failed to get location automatically. Please enter manually.');
-            setIsLocationModalOpen(true);
-          } finally {
-            setLoading(false);
-          }
-        },
-        (err) => {
-          console.error('Error getting location:', err);
-          setError('Unable to get your location automatically. Please enter manually.');
-          setIsLocationModalOpen(true);
-          setLoading(false);
-        }
-      );
-    } else {
-      setError('Geolocation is not supported by your browser. Please enter location manually.');
-      setIsLocationModalOpen(true);
-      setLoading(false);
-    }
-  };
-
   const handleLocationSubmit = (newLocation: string) => {
     setLocation(newLocation);
     setIsLocationModalOpen(false);
@@ -257,6 +208,7 @@ export default function Home() {
           onClose={() => setIsLocationModalOpen(false)}
           onLocationSubmit={handleLocationSubmit}
           currentLocation={location}
+          isError={error}
         />
       </Box>
     </>

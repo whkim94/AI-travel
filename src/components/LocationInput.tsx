@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import {
@@ -18,6 +18,7 @@ interface LocationInputProps {
   onClose: () => void;
   onLocationSubmit: (location: string) => void;
   currentLocation: string | null;
+  isError: string | null;
 }
 
 const LocationInput: React.FC<LocationInputProps> = ({
@@ -25,10 +26,11 @@ const LocationInput: React.FC<LocationInputProps> = ({
   onClose,
   onLocationSubmit,
   currentLocation,
+  isError,
 }) => {
   const [location, setLocation] = useState(currentLocation || '');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(isError || null);
 
   const handleManualSubmit = () => {
     if (location.trim()) {
@@ -36,6 +38,10 @@ const LocationInput: React.FC<LocationInputProps> = ({
       onClose();
     }
   };
+
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
 
   const getCurrentLocation = () => {
     if ('geolocation' in navigator) {
