@@ -1,9 +1,10 @@
 import parse from 'autosuggest-highlight/parse';
 import React, { useState, useEffect } from 'react';
 
-import { ThemeProvider } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { useTheme, ThemeProvider } from '@mui/material/styles';
 import {
   Box,
   Grid,
@@ -17,7 +18,7 @@ import {
   DialogActions,
 } from '@mui/material';
 
-import constantTheme from '../theme/constantTheme';
+import constantTheme from 'src/theme/constantTheme';
 
 interface LocationInputProps {
   open: boolean;
@@ -26,22 +27,15 @@ interface LocationInputProps {
   isError: string | null;
 }
 
-interface MainTextMatchedSubstrings {
-  offset: number;
-  length: number;
-}
-
-interface StructuredFormatting {
-  main_text: string;
-  secondary_text: string;
-  main_text_matched_substrings?: readonly MainTextMatchedSubstrings[];
-}
-
 interface PlaceType {
   display_name: string;
   lat: string;
   lon: string;
-  structured_formatting: StructuredFormatting;
+  structured_formatting: {
+    main_text: string;
+    secondary_text: string;
+    main_text_matched_substrings?: readonly { offset: number; length: number }[];
+  };
 }
 
 const LocationInput: React.FC<LocationInputProps> = ({
@@ -55,6 +49,8 @@ const LocationInput: React.FC<LocationInputProps> = ({
   const [options, setOptions] = useState<readonly PlaceType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(isError || null);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const fetchSuggestions = async (input: string): Promise<PlaceType[]> => {
     if (input.length < 3) {
@@ -178,11 +174,12 @@ const LocationInput: React.FC<LocationInputProps> = ({
 
   return (
     <ThemeProvider theme={constantTheme}>
-      <Dialog open={open} onClose={onClose}>
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth={!fullScreen}>
         <DialogTitle>Change Location</DialogTitle>
         <DialogContent>
           <Autocomplete
             id="location-autocomplete"
+            sx={{ width: '100%', mt: 2 }}
             getOptionLabel={(option) => (typeof option === 'string' ? option : option.display_name)}
             filterOptions={(x) => x}
             options={options}
