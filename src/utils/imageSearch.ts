@@ -1,5 +1,15 @@
 const PLACEHOLDER_IMAGE = '/assets/images/placeholder-image.jpg';
 
+async function isValidImageUrl(url: string): Promise<boolean> {
+  try {
+    const response = await fetch(url, { method: 'HEAD' });
+    const contentType = response.headers.get('content-type');
+    return response.ok && contentType != null && contentType.startsWith('image/');
+  } catch {
+    return false;
+  }
+}
+
 export async function searchImage(location: string): Promise<string> {
   const apiKey = process.env.GOOGLE_SEARCH_API_KEY;
   const searchEngineId = process.env.GOOGLE_SEARCH_ENGINE_ID;
@@ -23,7 +33,9 @@ export async function searchImage(location: string): Promise<string> {
     const data = await response.json();
 
     if (data?.items[0]?.link) {
-      return data.items[0].link;
+      const imageUrl = data.items[0].link;
+      const isValid = await isValidImageUrl(imageUrl);
+      return isValid ? imageUrl : PLACEHOLDER_IMAGE;
     }
 
     console.log('No image found for location:', location);
