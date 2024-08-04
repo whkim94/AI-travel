@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
@@ -7,9 +8,9 @@ import { ThemeProvider } from 'src/theme/theme-provider';
 
 import Header from 'src/components/Header';
 
-export const metadata = {
-  title: 'MoodTrek - Your Mood-Based Travel Advisor',
-  description: 'Get personalized travel suggestions based on your mood',
+export const metadata: Metadata = {
+  title: 'MoodTrek',
+  description: 'Your mood-based travel advisor',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -23,9 +24,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Typography variant="caption">
               Location data ©{' '}
               <Link
+                color="inherit"
                 href="https://www.openstreetmap.org/copyright"
                 target="_blank"
                 rel="noopener noreferrer"
+                underline="none"
               >
                 OpenStreetMap contributors
               </Link>
