@@ -206,7 +206,6 @@ export default function Home() {
           open={isLocationModalOpen}
           onClose={() => setIsLocationModalOpen(false)}
           onLocationSubmit={handleLocationSubmit}
-          currentLocation={location}
           isError={error}
         />
       </Box>
