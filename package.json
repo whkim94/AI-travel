@@ -2,7 +2,7 @@
   "name": "MoodTrek",
   "author": "Jonathan Kim",
   "version": "0.0.1",
-  "description": "Mood Based Travle Advisor",
+  "description": "Mood Based Travel Advisor",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3033",
