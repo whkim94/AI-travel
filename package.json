@@ -1,8 +1,8 @@
 {
-  "name": "@minimal-kit/starter-next-js",
-  "author": "Minimals",
+  "name": "MoodTrek",
+  "author": "Jonathan Kim",
   "version": "6.0.1",
-  "description": "Next Starter & JavaScript",
+  "description": "Mood Based Travle Advisor",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3033",
