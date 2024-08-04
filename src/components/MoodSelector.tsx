@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { keyframes } from '@mui/system';
+import { ThemeProvider } from '@mui/material/styles';
 import {
   Box,
   Button,
@@ -12,6 +13,8 @@ import {
   DialogActions,
   DialogContent,
 } from '@mui/material';
+
+import constantTheme from 'src/theme/constantTheme';
 
 import AnimatedButton from './AnimatedButton';
 
@@ -145,27 +148,29 @@ const MoodSelector: React.FC<MoodSelectorProps> = ({ onMoodSelect, loading }) =>
         Type Your Own Mood
       </AnimatedButton>
 
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-        <DialogTitle>Enter Your Mood</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            autoComplete="off"
-            margin="dense"
-            id="mood"
-            label="Your Mood"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={customMood}
-            onChange={(e) => setCustomMood(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleCustomMoodSubmit}>Submit</Button>
-        </DialogActions>
-      </Dialog>
+      <ThemeProvider theme={constantTheme}>
+        <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+          <DialogTitle>Enter Your Mood</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              autoComplete="off"
+              margin="dense"
+              id="mood"
+              label="Your Mood"
+              type="text"
+              fullWidth
+              variant="standard"
+              value={customMood}
+              onChange={(e) => setCustomMood(e.target.value)}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleCustomMoodSubmit}>Submit</Button>
+          </DialogActions>
+        </Dialog>
+      </ThemeProvider>
     </Box>
   );
 };
