@@ -122,7 +122,7 @@ export default function Home() {
   const handleReset = () => {
     setItineraryData(null);
     setMood(null);
-    setLocation(null);
+    // setLocation(null);
     setError(null);
   };
 
